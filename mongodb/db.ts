@@ -1,8 +1,9 @@
 import mongoose, { Mongoose } from "mongoose";
 
-const MONGO_URI = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@asia-star.mongocluster.cosmos.azure.com/?retryWrites=true&w=majority&tls=true`;
+// const MONGO_URI = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@asia-star.mongocluster.cosmos.azure.com/?retryWrites=true&w=majority&tls=true`;
 
-if (!MONGO_URI) {
+const MONGODB_URI = `mongodb+srv://livebeauty:India111a@cluster0.avkdh3y.mongodb.net/`
+if (!MONGODB_URI) {
     throw new Error("⚠️ MONGO_URI is not defined");
 }
 
@@ -23,7 +24,7 @@ const connectDB = async (): Promise<Mongoose> => {
 
     try {
         console.log("⏳ Connecting to MongoDB...");
-        cached.promise = cached.promise || mongoose.connect(MONGO_URI, {
+        cached.promise = cached.promise || mongoose.connect(MONGODB_URI, {
             serverSelectionTimeoutMS: 30000, // Increased timeout
             socketTimeoutMS: 45000,
             tls: true,
