@@ -9,7 +9,7 @@ export async function GET(
 ) {
   await connectDB();
 
-  const resolvedParams = await params; // Await the params Promise
+  const resolvedParams = await params; 
 
   try {
     const post = await Post.findById(resolvedParams.post_id);
@@ -32,8 +32,8 @@ export interface LikePostRequestBody {
 }
 
 export async function POST(
-  request: NextRequest, // Use NextRequest instead of Request for consistency
-  { params }: { params: Promise<{ post_id: string }> } // Update type to reflect Promise
+  request: NextRequest, 
+  { params }: { params: Promise<{ post_id: string }> }
 ) {
   const authData = await auth();
 
@@ -46,7 +46,7 @@ export async function POST(
 
   await connectDB();
 
-  const resolvedParams = await params; // Await the params Promise
+  const resolvedParams = await params; 
   const { userId }: LikePostRequestBody = await request.json();
 
   try {

@@ -14,7 +14,7 @@ export default function PostOption({ post }: { post: IPostDocument }) {
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const { user } = useUser();
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState<string[]>(post.likes ?? []);
+  const [likes, setLikes] = useState<string[]>(post.likes ?? []); 
 
   useEffect(() => {
     if (user?.id && post.likes?.includes(user.id)) {
@@ -48,7 +48,7 @@ export default function PostOption({ post }: { post: IPostDocument }) {
       if (!response.ok) {
         setLiked(originalLiked);
         setLikes(originalLikes);
-        toast.error("Failed to like or unlike post")
+        toast.error("Failed to like or unlike post");
         throw new Error(`Failed to ${liked ? "unlike" : "like"} post: ${response.statusText}`);
       }
 
@@ -62,24 +62,34 @@ export default function PostOption({ post }: { post: IPostDocument }) {
   return (
     <div>
       <div className="flex justify-between p-4">
-        {likes.length > 0 && <p className="text-xs text-gray-500">{likes.length} likes</p>}
-        {post.comments?.length ? (
+        {/* Ensure post.likes is always treated as an array */}
+        {Array.isArray(likes) && likes.length > 0 && (
+          <p className="text-xs text-gray-500">{likes.length} likes</p>
+        )}
+
+        {/* Ensure post.comments is always treated as an array */}
+        {Array.isArray(post.comments) && post.comments.length > 0 && (
           <p onClick={() => setIsCommentOpen(!isCommentOpen)} className="text-xs text-gray-500 cursor-pointer hover:underline">
             {post.comments.length} comments
           </p>
-        ) : null}
+        )}
       </div>
 
       <div className="flex p-2 justify-between px-2 border-t">
-        <Button variant="ghost" className="postButton" onClick={() => {
-          const promise = likeOrUnlikePost()
-          
-          toast.promise(promise,{
-            loading: liked ? "Unliking post..." : "Liking post...",
-            success: liked ? "Post Unliked" : "Post Liked",
-            error: "Failed to update like status",
-          })
-          }} disabled={!user}>
+        <Button
+          variant="ghost"
+          className="postButton"
+          onClick={() => {
+            const promise = likeOrUnlikePost();
+
+            toast.promise(promise, {
+              loading: liked ? "Unliking post..." : "Liking post...",
+              success: liked ? "Post Unliked" : "Post Liked",
+              error: "Failed to update like status",
+            });
+          }}
+          disabled={!user}
+        >
           <ThumbsUpIcon className={cn("mr-1", liked && "text-[#4881c2] fill-[#4881c2]")} />
           Like
         </Button>

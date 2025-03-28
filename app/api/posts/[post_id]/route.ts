@@ -1,3 +1,4 @@
+
 import connectDB from "@/mongodb/db";
 import { Post } from "@/mongodb/models/post";
 import { auth } from "@clerk/nextjs/server";
@@ -5,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { post_id: string } }
+  { params }: { params: Promise<{ post_id: string }> }
 ) {
   const authData = await auth();
 
@@ -17,9 +18,9 @@ export async function DELETE(
   }
 
   await connectDB();
-
+  const resolvedParams = await params; 
   try {
-    const post = await Post.findById(params.post_id);
+    const post = await Post.findById(resolvedParams.post_id);
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }

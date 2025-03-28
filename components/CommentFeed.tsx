@@ -1,18 +1,15 @@
 'use client';
 
 import { IPostDocument } from "@/mongodb/models/post";
-import { useUser } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import ReactTimeago from "react-timeago";
 
 export default function CommentFeed({ post }: { post: IPostDocument }) {
-  const { user } = useUser();
+
 
   return (
     <div className="space-y-2 mt-3">
       {post.comments?.map((comment) => {
-        const isAuthor = user?.id === comment.user.userId; // Now using isAuthor
-
         return (
           <div key={comment._id.toString()} className="flex space-x-1">
             <Avatar>

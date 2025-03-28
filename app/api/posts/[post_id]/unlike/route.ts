@@ -8,23 +8,19 @@ export interface UnLikePostRequestBody {
 
 export async function POST(
     request: Request,
-    { params }: { params: { post_id: string } }
+    { params }: { params: Promise<{ post_id: string }> }
 ) {
-    try {
-        await connectDB(); // Ensure the DB connection is established
+        await connectDB(); 
 
+        const resolvedParams = await params; 
         const { userId }: UnLikePostRequestBody = await request.json();
-
-        if (!params.post_id) {
-            return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
-        }
-
-        const post = await Post.findById(params.post_id);
+        
+        try {
+        const post = await Post.findById(resolvedParams.post_id);
         if (!post) {
             return NextResponse.json({ error: "Post not found" }, { status: 404 });
         }
 
-        // Call the unlikePost method on the post document
         await post.unlikePost(userId);
 
         return NextResponse.json({ message: "Post unliked successfully" });

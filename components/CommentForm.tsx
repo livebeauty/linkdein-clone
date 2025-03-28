@@ -30,7 +30,6 @@ export default function CommentForm({ postId }: { postId: string }) {
     <form ref={ref} action={(formData) => {
       const promise = handleCommentAction(formData)
 
-      // Toast
        // Toast notification based on the promise above
        toast.promise(promise, {
         loading: "Creating comment...",

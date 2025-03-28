@@ -1,29 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import connectDB from "@/mongodb/db";
 import { Post } from "@/mongodb/models/post";
 import { IUser } from "@/types/user";
 import { ICommentBase } from "@/mongodb/models/comment";
 
-// Define the response type for GET (optional but improves type safety)
-interface GetCommentsResponse {
-  comments: ICommentBase[];
-}
-
-// Fetch comments for a post
+// ✅ GET: Fetch comments for a post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { post_id: string } }
+  { params }: { params: Promise<{ post_id: string }>}
 ) {
-  try {
-    await connectDB();
-    const post = await Post.findById(params.post_id);
+  await connectDB();
+
+  const resolvedParams = await params; 
+
+    try {
+    const post = await Post.findById(resolvedParams.post_id);
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
     const comments = await post.getAllComments();
-    return NextResponse.json({ comments } as GetCommentsResponse);
+    return NextResponse.json(comments);
   } catch (error) {
     return NextResponse.json(
       {
@@ -36,30 +34,25 @@ export async function GET(
   }
 }
 
-// Define the request body type for POST
+
 export interface AddCommentRequestBody {
   user: IUser;
   text: string;
 }
 
-// Add a comment to a post
+
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { post_id: string } }
+   request: NextRequest, 
+  { params }: { params: Promise<{ post_id: string }> }
 ) {
-  try {
-    await connectDB();
+  await connectDB();
+
+ 
+  const resolvedParams = await params; 
     const { user, text }: AddCommentRequestBody = await request.json();
+    try {
+    const post = await Post.findById(resolvedParams.post_id);
 
-    // Validate request body
-    if (!user || !text) {
-      return NextResponse.json(
-        { error: "User and text are required" },
-        { status: 400 }
-      );
-    }
-
-    const post = await Post.findById(params.post_id);
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
